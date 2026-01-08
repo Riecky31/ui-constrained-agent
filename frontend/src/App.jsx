@@ -1,35 +1,26 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import MessageBubble from "./components/MessageBubble.jsx";
+import InputBar from "./components/InputBar.jsx";
+import ConfidenceBar from "./components/ConfidenceBar.jsx";
+import "./App.css";
+import "./styles.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="app-container">
+      <h1>UI-Constrained Agent</h1>
 
-export default App
+      {/* Message area */}
+      <div className="message-area">
+        <MessageBubble msg={{ role: "assistant", text: "Hello! I am ready." }} />
+        <MessageBubble msg={{ role: "user", text: "Hi!" }} />
+      </div>
+
+      {/* Input */}
+      <InputBar />
+
+      {/* Confidence */}
+      <ConfidenceBar />
+    </div>
+  );
+}
