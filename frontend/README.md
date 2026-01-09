@@ -1,57 +1,50 @@
-# UI-Constrained Agent
+# UI-Constrained Agent Assessment
 
-## Requirements
-- Node.js 20+
-- npm or yarn
+## Overview
+A task-focused assistant where the UI constrains the agent's behavior, preventing free-form chat and ensuring structured, predictable interactions.
 
-## Installation
+**Key Features:**
+-  **120-character limit** on all agent responses
+-  **Predefined UI components only** (buttons, forms, status indicators)
+-  **Partial task completion** with visual states
+-  **User correction** without restarting tasks
+-  **Visible confidence/uncertainty** metrics
+
+## Quick Start
+
+### Prerequisites
+- Node.js 18+ (LTS recommended)
+- npm 9+ or yarn
+
+### Installation & Running
 ```bash
+# 1. Navigate to frontend directory
+cd frontend
+
+# 2. Install dependencies
 npm install
 
+# 3. Start the development server
+npm run dev
 
-### b) Design decisions
+# 4. Open browser to:
+# http://localhost:5173
 
-- Agent responses are **UI-constrained**, ≤120 chars
-- All messages are normalized: `{ role, text, charCount, timestamp }`
-- **Zustand store** handles:
-  - agentResponses
-  - taskState (`idle` | `in_progress` | `partial` | `complete`)
-  - confidence / uncertainty
-- Partial completion handled via `applyCorrection`
-- Confidence/uncertainty always sum to 1
-
-### c) Failure scenario & recovery
-
-Example:
-
-> **Scenario:** User skips a required step.  
-> **Recovery:** Agent still uses `taskState` and `providedData` to suggest next action. State is never lost; partial completion remains until corrected.
-
-### d) Why plain-text chat would break this
-
-- UI constraints (buttons, forms, indicators) wouldn’t be enforced
-- Agent could produce >120 chars, violating the UI contract
-- Partial completion & correction flows rely on **state awareness**, which is invisible in plain text
-
----
-
-## Final checks
-
-- All flows tested:
-  - New task → normal response
-  - Partial task → correction
-  - Skipped step → fallback response
-- Confirm confidence bar updates correctly
-- Confirm no runtime errors
-- Confirm app runs from fresh clone / zip
-- Include **screenshots** and diagram in README
-
----
-
-If you follow this plan, you’ll meet **all submission requirements**: working code, diagrams, screenshots, README explaining state & design decisions.  
-
----
-
-If you want, I can **draft a sample README and diagram layout for your submission** that you can just fill in with your screenshots — ready to go for GitHub/zip.  
-
-Do you want me to do that next?
+┌─────────┐    ┌──────────────┐    ┌──────────────┐
+│  User   │────▶│    UI Layer   │────▶│   Response   │
+│  Input  │    │  (Constrained)│    │   Renderer   │
+└─────────┘    └──────────────┘    └──────────────┘
+      │               │                    │
+      ▼               ▼                    ▼
+┌─────────┐    ┌──────────────┐    ┌──────────────┐
+│  Task   │◀───│  Agent Store  │◀───│  120-Char    │
+│  State  │    │  (Zustand)    │    │   Enforcer   │
+└─────────┘    └──────────────┘    └──────────────┘
+      │               │                    │
+      ▼               ▼                    ▼
+┌─────────────────────────────────────────────────┐
+│              Partial State Manager              │
+│  • Save progress at any point                   │
+│  • Resume from correction points                │
+│  • Maintain confidence through corrections      │
+└─────────────────────────────────────────────────┘
