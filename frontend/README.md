@@ -30,21 +30,28 @@ npm run dev
 # 4. Open browser to:
 # http://localhost:5173
 
-┌─────────┐    ┌──────────────┐    ┌──────────────┐
-│  User   │────▶│    UI Layer   │────▶│   Response   │
-│  Input  │    │  (Constrained)│    │   Renderer   │
-└─────────┘    └──────────────┘    └──────────────┘
-      │               │                    │
-      ▼               ▼                    ▼
-┌─────────┐    ┌──────────────┐    ┌──────────────┐
-│  Task   │◀───│  Agent Store  │◀───│  120-Char    │
-│  State  │    │  (Zustand)    │    │   Enforcer   │
-└─────────┘    └──────────────┘    └──────────────┘
-      │               │                    │
-      ▼               ▼                    ▼
-┌─────────────────────────────────────────────────┐
-│              Partial State Manager              │
-│  • Save progress at any point                   │
-│  • Resume from correction points                │
-│  • Maintain confidence through corrections      │
-└─────────────────────────────────────────────────┘
+## Screenshots
+
+### 1. Main UI with All Constraints Active
+![UI Overview](./screenshots/ui-overview.png)
+*Showing character counter, predefined buttons, confidence display*
+
+### 2. Character Limit Enforcement  
+![Character Limit](./screenshots/char-limit.png)
+*Agent response truncated at 120 characters*
+
+### 3. Partial Completion State
+![Partial State](./screenshots/partial-state.png)
+*Task paused showing correction available*
+
+### 4. Correction Flow in Action
+![Correction Flow](./screenshots/correction-flow.png)
+*User applying correction without restart*
+
+### 5. Confidence Display
+![Confidence Display](./screenshots/confidence-display.png)
+*Visual confidence meter and uncertainty*
+
+### 6. State Flow Diagram
+![State Diagram](./screenshots/stateflow.png)
+*Complete state machine and transitions*
