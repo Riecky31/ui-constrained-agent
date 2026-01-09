@@ -12,5 +12,10 @@ export const sendMessage = async (sessionId, text) => {
     sessionId,
     userMessage: text,
   });
-  return res.data;
+  return {
+  response: res.data.response,
+  confidence: res.data.confidence,
+  taskState: res.data.taskState
+};
+
 };
