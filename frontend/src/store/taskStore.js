@@ -1,77 +1,101 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 const useTaskStore = create((set, get) => ({
-  // Current task state
+  // --- Core Task State ---
   currentTask: null,
   currentStep: 0,
   completedSteps: [],
   partialData: {},
-  
-  // Task actions
-  selectTask: (task) => set({ 
-    currentTask: task,
-    currentStep: 0,
-    completedSteps: [],
-    partialData: {}
-  }),
-  
-  completeStep: (stepId, data) => set((state) => ({
-    completedSteps: [...state.completedSteps, stepId],
-    partialData: { ...state.partialData, [stepId]: data },
-    currentStep: state.currentStep + 1
-  })),
-  
-  updatePartialData: (stepId, data) => set((state) => ({
-    partialData: { ...state.partialData, [stepId]: data }
-  })),
-  
-  // Correction without restart
-  applyCorrectionToStep: (stepId, correction) => set((state) => {
-    // Remove step from completed if it was completed
-    const newCompletedSteps = state.completedSteps.filter(id => id !== stepId);
-    
-    // Update data with correction
-    const newPartialData = { ...state.partialData };
-    if (newPartialData[stepId]) {
-      newPartialData[stepId] = { 
-        ...newPartialData[stepId], 
-        correction,
-        correctedAt: new Date().toISOString()
+
+  // --- Task Selection ---
+  selectTask: (task) =>
+    set({
+      currentTask: task,
+      currentStep: 0,
+      completedSteps: [],
+      partialData: {},
+    }),
+
+  // --- Completing Steps ---
+  completeStep: (stepId, data) =>
+    set((state) => ({
+      completedSteps: [...new Set([...state.completedSteps, stepId])],
+      partialData: { ...state.partialData, [stepId]: data },
+      currentStep: state.currentStep + 1,
+    })),
+
+  // --- Update Partial Data (Mid-Task Edits) ---
+  updatePartialData: (stepId, data) =>
+    set((state) => ({
+      partialData: {
+        ...state.partialData,
+        [stepId]: { ...state.partialData[stepId], ...data },
+      },
+    })),
+
+  // --- Apply Corrections Without Restart ---
+  applyCorrectionToStep: (stepId, correction) =>
+    set((state) => {
+      const isCompleted = state.completedSteps.includes(stepId);
+
+      // Remove step from completed list if needed
+      const updatedCompleted = isCompleted
+        ? state.completedSteps.filter((id) => id !== stepId)
+        : state.completedSteps;
+
+      // Update partial data safely
+      const newPartial = {
+        ...state.partialData,
+        [stepId]: {
+          ...state.partialData[stepId],
+          correction,
+          correctedAt: new Date().toISOString(),
+        },
       };
-    }
-    
-    return {
-      completedSteps: newCompletedSteps,
-      partialData: newPartialData,
-      currentStep: Math.min(stepId - 1, state.currentStep)
-    };
-  }),
-  
-  // Task progress
-  getProgress: () => {
-    const state = get();
-    if (!state.currentTask) return 0;
-    return (state.completedSteps.length / state.currentTask.steps.length) * 100;
-  },
-  
+
+      // If a user corrects a previous step, move cursor back ONLY if needed
+      const newStep =
+        state.currentStep > stepId ? stepId : state.currentStep;
+
+      return {
+        completedSteps: updatedCompleted,
+        partialData: newPartial,
+        currentStep: newStep,
+      };
+    }),
+
+  // --- Step Helpers ---
+  advanceStep: () =>
+    set((state) => ({
+      currentStep: state.currentStep + 1,
+    })),
+
   getCurrentStep: () => {
     const state = get();
     if (!state.currentTask) return null;
-    return state.currentTask.steps[state.currentStep];
+    return state.currentTask.steps[state.currentStep] ?? null;
   },
-  
+
   isStepCompleted: (stepId) => {
-    const state = get();
-    return state.completedSteps.includes(stepId);
+    return get().completedSteps.includes(stepId);
   },
-  
-  // Reset
-  resetTask: () => set({
-    currentTask: null,
-    currentStep: 0,
-    completedSteps: [],
-    partialData: {}
-  })
+
+  // --- Progress ---
+  getProgress: () => {
+    const state = get();
+    if (!state.currentTask) return 0;
+    const total = state.currentTask.steps.length;
+    return (state.completedSteps.length / total) * 100;
+  },
+
+  // --- Reset ---
+  resetTask: () =>
+    set({
+      currentTask: null,
+      currentStep: 0,
+      completedSteps: [],
+      partialData: {},
+    }),
 }));
 
 export default useTaskStore;

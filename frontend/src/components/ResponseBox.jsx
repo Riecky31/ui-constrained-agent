@@ -3,8 +3,12 @@ import useAgentStore from '../store/agentStore';
 
 const ResponseBox = () => {
   const { agentResponses, responseLimit } = useAgentStore();
+
+  const safeText = (msg) =>
+    typeof msg.text === 'string' ? msg.text : JSON.stringify(msg.text);
+
   const lastAgentResponse = agentResponses
-    .filter(msg => !msg.text?.startsWith('User:'))
+    .filter(msg => !safeText(msg).startsWith('User:'))
     .slice(-1)[0];
 
   if (!lastAgentResponse) {
@@ -24,6 +28,7 @@ const ResponseBox = () => {
     );
   }
 
+  const text = safeText(lastAgentResponse);
   const isNearLimit = lastAgentResponse.charCount > responseLimit * 0.8;
 
   return (
@@ -34,32 +39,32 @@ const ResponseBox = () => {
           {lastAgentResponse.charCount}/{responseLimit} chars
         </span>
       </div>
-      
+
       <div className="response-content">
-        <p>{lastAgentResponse.text}</p>
-        
+        <p>{text}</p>
+
         {/* Predefined UI components for agent responses */}
         <div className="response-actions">
-          {lastAgentResponse.text.includes('time slots') && (
+          {text.includes('time slots') && (
             <>
               <button className="action-btn primary">Monday 10 AM</button>
               <button className="action-btn primary">Wednesday 2 PM</button>
               <button className="action-btn primary">Friday 11 AM</button>
             </>
           )}
-          
-          {lastAgentResponse.text.includes('Confidence') && (
+
+          {text.includes('Confidence') && (
             <div className="confidence-display">
               <div className="progress-bar">
-                <div 
-                  className="progress-fill" 
-                  style={{ width: `${parseInt(lastAgentResponse.text.match(/\d+/)?.[0] || 50)}%` }}
+                <div
+                  className="progress-fill"
+                  style={{ width: `${parseInt(text.match(/\d+/)?.[0] || 50)}%` }}
                 />
               </div>
             </div>
           )}
-          
-          {lastAgentResponse.text.includes('complete') && (
+
+          {text.includes('complete') && (
             <div className="status-indicators">
               <span className="status-dot partial" />
               <span className="status-label">Partial Completion</span>

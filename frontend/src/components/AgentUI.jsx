@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import useAgentStore from "../store/agentStore";
 import useTaskStore from "../store/taskStore";
 
@@ -6,6 +6,7 @@ import ConfidenceBar from "./ConfidenceBar";
 import PartialStateIndicator from "./PartialStateIndicator";
 import ActionButtons from "./ActionButtons";
 import ResponseBox from "./ResponseBox";
+import MessageBubble from "./MessageBubble";
 
 import { taskTemplates } from "../tasks/taskTemplates";
 import { simulateAgentResponse } from "../utils/agentSimulator";
@@ -14,6 +15,7 @@ import "../styles.css";
 
 /* Utility */
 const clip120 = (t) => t.substring(0, 120);
+const now = () => Date.now();
 
 const AgentUI = () => {
   /* Stores */
@@ -30,7 +32,6 @@ const AgentUI = () => {
 
   const {
     selectTask,
-    completeStep,
     getProgress,
     resetTask: resetTaskStateStore,
     currentTask
@@ -66,7 +67,7 @@ const AgentUI = () => {
     addAgentResponse({
       role: "agent",
       text: welcome,
-      timestamp: Date.now(),
+      timestamp: now(),
       charCount: welcome.length
     });
   };
@@ -80,7 +81,7 @@ const AgentUI = () => {
     const userMsg = {
       role: "user",
       text: clip120(userInput),
-      timestamp: Date.now(),
+      timestamp: now(),
       charCount: userInput.length
     };
     addAgentResponse(userMsg);
@@ -98,7 +99,7 @@ const AgentUI = () => {
       addAgentResponse({
         role: "agent",
         text: agentText,
-        timestamp: Date.now(),
+        timestamp: now(),
         charCount: agentText.length
       });
 
@@ -144,7 +145,7 @@ const AgentUI = () => {
     addAgentResponse({
       role: "user",
       text: userText,
-      timestamp: Date.now(),
+      timestamp: now(),
       charCount: userText.length
     });
 
@@ -152,7 +153,7 @@ const AgentUI = () => {
       addAgentResponse({
         role: "agent",
         text: agentText,
-        timestamp: Date.now(),
+        timestamp: now(),
         charCount: agentText.length
       });
     }, 400);
@@ -231,7 +232,7 @@ const AgentUI = () => {
                   addAgentResponse({
                     role: "agent",
                     text: `Applied correction: ${clipped}`,
-                    timestamp: Date.now(),
+                    timestamp: now(),
                     charCount: clipped.length
                   });
 
@@ -257,41 +258,7 @@ const AgentUI = () => {
 
             <div className="messages">
               {agentResponses.map((msg, i) => (
-                <div key={i} className={`message ${msg.role}`}>
-                  <div className="message-header">
-                    <span className="message-sender">
-                      {msg.role === "user" ? "👤 You" : "🤖 Agent"}
-                    </span>
-                    <span className="message-time">
-                      {new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit"
-                      })}
-                    </span>
-                  </div>
-
-                  <div className="message-content">{msg.text}</div>
-
-                  {msg.role === "agent" && (
-                    <div className="message-footer">
-                      <span
-                        className={`char-count ${
-                          msg.charCount > 100 ? "warning" : ""
-                        }`}
-                      >
-                        {msg.charCount}/120
-                      </span>
-                      <div className="char-bar">
-                        <div
-                          className="char-fill"
-                          style={{
-                            width: `${(msg.charCount / 120) * 100}%`
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <MessageBubble key={i} msg={msg} />
               ))}
 
               <div ref={messagesEnd}></div>

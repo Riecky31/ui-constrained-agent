@@ -1,16 +1,57 @@
-# React + Vite
+# UI-Constrained Agent
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Requirements
+- Node.js 20+
+- npm or yarn
 
-Currently, two official plugins are available:
+## Installation
+```bash
+npm install
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+### b) Design decisions
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Agent responses are **UI-constrained**, ≤120 chars
+- All messages are normalized: `{ role, text, charCount, timestamp }`
+- **Zustand store** handles:
+  - agentResponses
+  - taskState (`idle` | `in_progress` | `partial` | `complete`)
+  - confidence / uncertainty
+- Partial completion handled via `applyCorrection`
+- Confidence/uncertainty always sum to 1
 
-## Expanding the ESLint configuration
+### c) Failure scenario & recovery
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Example:
+
+> **Scenario:** User skips a required step.  
+> **Recovery:** Agent still uses `taskState` and `providedData` to suggest next action. State is never lost; partial completion remains until corrected.
+
+### d) Why plain-text chat would break this
+
+- UI constraints (buttons, forms, indicators) wouldn’t be enforced
+- Agent could produce >120 chars, violating the UI contract
+- Partial completion & correction flows rely on **state awareness**, which is invisible in plain text
+
+---
+
+## Final checks
+
+- All flows tested:
+  - New task → normal response
+  - Partial task → correction
+  - Skipped step → fallback response
+- Confirm confidence bar updates correctly
+- Confirm no runtime errors
+- Confirm app runs from fresh clone / zip
+- Include **screenshots** and diagram in README
+
+---
+
+If you follow this plan, you’ll meet **all submission requirements**: working code, diagrams, screenshots, README explaining state & design decisions.  
+
+---
+
+If you want, I can **draft a sample README and diagram layout for your submission** that you can just fill in with your screenshots — ready to go for GitHub/zip.  
+
+Do you want me to do that next?
