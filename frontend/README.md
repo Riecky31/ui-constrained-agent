@@ -1,16 +1,53 @@
-# React + Vite
+# UI-Constrained Agent Assessment
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+A task-focused assistant where the UI constrains the agent's behavior, preventing free-form chat and ensuring structured, predictable interactions.
 
-Currently, two official plugins are available:
+**Key Features:**
+- **120-character limit** on all agent responses
+- **Predefined UI components only** (buttons, forms, status indicators)
+- **Partial task completion** with visual states
+- **User correction** without restarting tasks
+- **Visible confidence/uncertainty** metrics
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Quick Start
 
-## React Compiler
+### Prerequisites
+- Node.js 18+ (LTS recommended)
+- npm 9+ or yarn
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Installation & Running
+```bash
+# 1. Navigate to frontend directory
+cd frontend
 
-## Expanding the ESLint configuration
+# 2. Install dependencies
+npm install
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+# 3. Start the development server
+npm run dev
+
+# 4. Open browser to:
+# http://localhost:5173
+Screenshots
+The following screenshots demonstrate all required assessment features:
+
+1. Initial Interface
+https://./public/screenshots/Ui-before-sellection.png
+*Showing: Task selection panel, constraint explanation (120-char limit, predefined components only)*
+
+2. Active Task Interface
+https://./public/screenshots/ui-after-selection.png
+*Showing: Agent response with character counter (95/120), confidence display (85%), predefined action buttons, partial state indicator*
+
+3. State Management Diagram
+https://./public/screenshots/stateflow.png
+Complete state machine showing: idle → in_progress → partial → complete transitions with recovery paths and correction flows
+
+4. Correction Process
+https://./public/screenshots/correction.png
+User applying correction without restart: confidence adjusts from 85% to 70%, task continues from correction point, no restart required
+
+5. Recovery Behavior
+https://./public/screenshots/recovery.png
+System recovery after errors: partial state entry, confidence adjustment, continued execution, state preservation
