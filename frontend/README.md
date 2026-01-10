@@ -29,8 +29,9 @@ npm run dev
 
 # 4. Open browser to:
 # http://localhost:5173
+
+
 Screenshots
-The following screenshots demonstrate all required assessment features:
 
 1. Initial Interface
 ![UI-before-selection](./public/screenshots/UI-before-selection.png)
