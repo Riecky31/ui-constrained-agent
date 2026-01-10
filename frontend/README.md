@@ -33,21 +33,16 @@ Screenshots
 The following screenshots demonstrate all required assessment features:
 
 1. Initial Interface
-https://./public/screenshots/Ui-before-sellection.png
-*Showing: Task selection panel, constraint explanation (120-char limit, predefined components only)*
+![UI-before-selection](./public/screenshots/UI-before-selection.png)
 
-2. Active Task Interface
-https://./public/screenshots/ui-after-selection.png
-*Showing: Agent response with character counter (95/120), confidence display (85%), predefined action buttons, partial state indicator*
+2. Active Task Interface  
+![ui-after-selection](./public/screenshots/ui-after-selection.png)
 
 3. State Management Diagram
-https://./public/screenshots/stateflow.png
-Complete state machine showing: idle → in_progress → partial → complete transitions with recovery paths and correction flows
+![stateflow](./public/screenshots/stateflow.png)
 
 4. Correction Process
-https://./public/screenshots/correction.png
-User applying correction without restart: confidence adjusts from 85% to 70%, task continues from correction point, no restart required
+![correction](./public/screenshots/correction.png)
 
 5. Recovery Behavior
-https://./public/screenshots/recovery.png
-System recovery after errors: partial state entry, confidence adjustment, continued execution, state preservation
+![recovery](./public/screenshots/recovery.png)
